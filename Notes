@@ -1,0 +1,5 @@
+Upgrade Shell:
+
+python -c'import pty; pty.spawn("/bin/bash")'
+Then use:
+stty -a
